@@ -71,6 +71,14 @@ class entity_views_plugin_row_entity_view extends views_plugin_row {
     if (!empty($values)) {
       list($this->entity_type, $this->entities) = $this->view->query->get_result_entities($values, !empty($this->relationship) ? $this->relationship : NULL, isset($this->field_alias) ? $this->field_alias : NULL);
     }
+    // Attach view to entity if it does not exist. Replicating node row plugin.
+    // Used for specifying view specific templates. Use underscore to minimize
+    // clobbering
+    foreach($this->entities as $entity) {
+      if (!isset($entity->_view)) {
+        $entity->_view = $this->view;
+      }
+    }
     // Render the entities.
     if ($this->entities) {
       $render = entity_view($this->entity_type, $this->entities, $this->options['view_mode']);
